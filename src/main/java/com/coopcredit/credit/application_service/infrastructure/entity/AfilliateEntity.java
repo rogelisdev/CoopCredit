@@ -8,29 +8,32 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Table(name = "afilliate")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AfilliateEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "afilliate_id")
     private Long id;
 
-    @Column(nullable = true)
-    private String firtsName;
+    @Column(nullable = false, unique = true)
+    private String document;     // Nuevo *
 
-    @Column(nullable = true)
+    private String firstName;
     private String lastname;
-
     private String email;
 
     private BigDecimal salary;
 
+    @Enumerated(EnumType.STRING)
     private AfilliateStatus status;
-    private LocalDate registrationDate;
 
+    private LocalDate registrationDate;
 }
+
+

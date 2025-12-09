@@ -7,17 +7,19 @@ import java.time.LocalDate;
 
 public class Afilliate {
     private Long id;
-    private String firtsName;
+    private String firstName;
     private String lastname;
+    private String document;
     private String email;
     private BigDecimal salary;
     private AfilliateStatus status;
     private LocalDate registrationDate;
 
-    public Afilliate(Long id, String firtsName, String lastname, String email, BigDecimal salary, AfilliateStatus status, LocalDate registrationDate) {
+    public Afilliate(Long id, String firstName, String lastname, String document, String email, BigDecimal salary, AfilliateStatus status, LocalDate registrationDate) {
         this.id = id;
-        this.firtsName = firtsName;
+        this.firstName = firstName;
         this.lastname = lastname;
+        this.document = document;
         this.email = email;
         this.salary = salary;
         this.status = status;
@@ -35,12 +37,12 @@ public class Afilliate {
         this.id = id;
     }
 
-    public String getFirtsName() {
-        return firtsName;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirtsName(String firtsName) {
-        this.firtsName = firtsName;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastname() {
@@ -49,6 +51,14 @@ public class Afilliate {
 
     public void setLastname(String lastname) {
         this.lastname = lastname;
+    }
+
+    public String getDocument() {
+        return document;
+    }
+
+    public void setDocument(String document) {
+        this.document = document;
     }
 
     public String getEmail() {

@@ -4,6 +4,8 @@ import com.coopcredit.credit.application_service.domain.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 @Builder
@@ -17,13 +19,17 @@ public class UserEntity {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String password;
 
-     @ElementCollection(fetch = FetchType.EAGER)
-     @CollectionTable(name = "user_role")
-     @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TokenEntity> tokens;
 }
