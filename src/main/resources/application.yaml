@@ -1,0 +1,40 @@
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: application-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/mi_bd?useSSL=false&serverTimezone=UTC
+    username: root
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update       # create | create-drop | update | validate | none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+jwt:
+  secret: "mi_super_clave_secreta_para_jwt_que_debe_ser_larga"
+  expiration: 86400000       # 24 hora en milisegundos
+  issuer: "mi-api"
+  header: "Authorization"
+  prefix: "Bearer "
+
+security:
+  enabled: true
