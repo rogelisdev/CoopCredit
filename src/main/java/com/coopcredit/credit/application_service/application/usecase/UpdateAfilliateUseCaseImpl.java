@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
+@Component
 @RequiredArgsConstructor
 public class UpdateAfilliateUseCaseImpl implements UpdateAfilliateUseCase {
 

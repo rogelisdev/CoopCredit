@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface JpaCreditApplicationRepository extends JpaRepository<CreditApplicationEntity, Long> {
-    List<CreditApplicationEntity> findByAfilliateId(Long afilliateId);
+    List<CreditApplicationEntity> findByAffiliateId(Long affiliateId);
 }

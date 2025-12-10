@@ -39,7 +39,7 @@ public class AppConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            UserEntity user = userRepository.findByUserName(username)
+            UserEntity user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
             return org.springframework.security.core.userdetails.User.builder()

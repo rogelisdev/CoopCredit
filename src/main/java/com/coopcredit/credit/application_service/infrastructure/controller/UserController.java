@@ -19,7 +19,7 @@ public class UserController {
     // Endpoint accessible by any authenticated user
     @GetMapping("/me")
     public ResponseEntity<UserEntity> getCurrentUser(@RequestParam String username) {
-        UserEntity user = userRepository.findByUserName(username)
+        UserEntity user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return ResponseEntity.ok(user);
     }

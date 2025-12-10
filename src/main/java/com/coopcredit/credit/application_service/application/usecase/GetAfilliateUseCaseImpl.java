@@ -8,11 +8,13 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
+@Component
 @RequiredArgsConstructor
 public class GetAfilliateUseCaseImpl implements GetAfilliateUseCase {
 
     private final AfilliateRepositoryPort repositoryPort;
-
 
     @Override
     public List<Afilliate> getAll() {

@@ -4,6 +4,9 @@ import com.coopcredit.credit.application_service.domain.ports.in.DeleteAfilliate
 import com.coopcredit.credit.application_service.domain.ports.out.AfilliateRepositoryPort;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.stereotype.Component;
+
+@Component
 @RequiredArgsConstructor
 public class DeleteAfilliateUseCaseImpl implements DeleteAfilliateUseCase {
 

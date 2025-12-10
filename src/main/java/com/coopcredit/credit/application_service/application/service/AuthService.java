@@ -28,8 +28,8 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    //------ REGISTER
-    public TokenResponse register(RegisterRequest request){
+    // ------ REGISTER
+    public TokenResponse register(RegisterRequest request) {
         UserEntity user = UserEntity.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -41,16 +41,14 @@ public class AuthService {
 
     }
 
-    //------LOGIN
+    // ------LOGIN
 
-    public TokenResponse login(LoginRequest request){
+    public TokenResponse login(LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
-                        request.getPassword()
-                )
-        );
-        UserEntity user = userRepository.findByUserName(request.getUsername())
+                        request.getPassword()));
+        UserEntity user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         revokeAllUserTokens(user);
@@ -63,18 +61,19 @@ public class AuthService {
 
     }
 
-    private void revokeAllUserTokens(UserEntity user){
+    private void revokeAllUserTokens(UserEntity user) {
         List<TokenEntity> validUserTokens = tokenRepository.findAllByUserAndExpiredFalseAndRevokedFalse(user);
 
-        if(validUserTokens.isEmpty()){
-            for (TokenEntity token : validUserTokens){
+        if (validUserTokens.isEmpty()) {
+            for (TokenEntity token : validUserTokens) {
                 token.setExpired(true);
                 token.setRevoked(true);
             }
             tokenRepository.saveAll(validUserTokens);
         }
     }
-    private void saveUserToken(UserEntity userEntity, String jwtToken){
+
+    private void saveUserToken(UserEntity userEntity, String jwtToken) {
         TokenEntity token = TokenEntity.builder()
                 .user(userEntity)
                 .token(jwtToken)
@@ -95,7 +94,7 @@ public class AuthService {
         String refreshToken = authHeader.substring(7);
         String username = jwtService.extractUsername(refreshToken);
 
-        UserEntity user = userRepository.findByUserName(username)
+        var user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         if (!jwtService.isTokenValid(refreshToken, user)) {
