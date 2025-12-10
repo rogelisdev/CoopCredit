@@ -41,5 +41,6 @@ public class UserEntity {
     // Relationship: User 1..* Token
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<TokenEntity> tokens = new ArrayList<>();
 }

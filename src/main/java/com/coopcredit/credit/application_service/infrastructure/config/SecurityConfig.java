@@ -38,7 +38,7 @@ public class SecurityConfig {
                         // Role-based access control
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/analyst/**").hasAnyRole("ANALYST", "ADMIN")
-                        .requestMatchers("/affiliates/**", "/credit-applications/**")
+                        .requestMatchers("/api/affiliates/**", "/credit-applications/**")
                         .hasAnyRole("AFILIADO", "ANALYST", "ADMIN")
 
                         // All other requests require authentication

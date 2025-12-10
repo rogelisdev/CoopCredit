@@ -7,32 +7,18 @@ spring:
     name: credit-application-service
     
   datasource:
-    # H2 for local development (switch to PostgreSQL for production)
-    url: jdbc:h2:mem:coopcredit
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-    # PostgreSQL for production (uncomment when using Docker)
-    # url: ${DB_URL:jdbc:postgresql://localhost:5432/coopcredit}
-    # driver-class-name: org.postgresql.Driver
-    # username: ${DB_USERNAME:postgres}
-    # password: ${DB_PASSWORD:postgres}
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/coopcredit}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
   jpa:
     hibernate:
-      ddl-auto: validate       # Use Flyway for migrations
+      ddl-auto: update       # Use Flyway for migrationsi ya tienes el esquema preparado
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.H2Dialect
-        # dialect: org.hibernate.dialect.PostgreSQLDialect  # For production
-    open-in-view: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
   # Flyway configuration
   flyway:
@@ -93,14 +79,15 @@ management:
     prometheus:
       enabled: true
   metrics:
-    export:
-      prometheus:
-        enabled: true
     tags:
       application: ${spring.application.name}
     distribution:
       percentiles-histogram:
         http.server.requests: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 # Logging Configuration
 logging:

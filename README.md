@@ -217,7 +217,7 @@ Access interactive API documentation at:
 
 ```bash
 # Register new affiliate
-curl -X POST http://localhost:8080/auth/register \
+curl -X POST http://localhost:8085/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "username": "john.doe",
@@ -230,7 +230,7 @@ curl -X POST http://localhost:8080/auth/register \
   }'
 
 # Login
-curl -X POST http://localhost:8080/auth/login \
+curl -X POST http://localhost:8085/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "username": "john.doe",
@@ -242,7 +242,7 @@ curl -X POST http://localhost:8080/auth/login \
 
 ```bash
 # Create credit application (requires JWT token)
-curl -X POST http://localhost:8080/credit-applications \
+curl -X POST http://localhost:8085/credit-applications \
   -H "Authorization: Bearer <YOUR_JWT_TOKEN>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -252,11 +252,11 @@ curl -X POST http://localhost:8080/credit-applications \
   }'
 
 # Evaluate credit application
-curl -X POST http://localhost:8080/credit-applications/1/evaluate \
+curl -X POST http://localhost:8085/credit-applications/1/evaluate \
   -H "Authorization: Bearer <YOUR_JWT_TOKEN>"
 
 # List all applications
-curl -X GET http://localhost:8080/credit-applications \
+curl -X GET http://localhost:8085/credit-applications \
   -H "Authorization: Bearer <YOUR_JWT_TOKEN>"
 ```
 

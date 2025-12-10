@@ -50,10 +50,12 @@ public class AfilliateEntity {
     // Relationship: Affiliate 1..* CreditApplication
     @OneToMany(mappedBy = "affiliate", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<CreditApplicationEntity> creditApplications = new ArrayList<>();
 
     // Relationship: Affiliate 1..1 User (optional, for ROLE_AFILIADO users)
     @OneToOne(mappedBy = "affiliate", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private UserEntity user;
 
     // Helper methods

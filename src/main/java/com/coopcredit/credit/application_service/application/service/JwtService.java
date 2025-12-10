@@ -22,16 +22,17 @@ public class JwtService {
     private long refreshExpiration;
 
     // ------------------- GENERATE ACCESS TOKEN ------------------
-    public String generateToken(UserEntity userEntity){
+    public String generateToken(UserEntity userEntity) {
         return buildToken(userEntity, jwtExpiration);
     }
+
     // ------------------- GENERATE REFRESH TOKEN ----
-    public String generateRefreshToken(UserEntity userEntity){
+    public String generateRefreshToken(UserEntity userEntity) {
         return buildToken(userEntity, refreshExpiration);
     }
 
     // ------------------- PRIVATE METHOD TO BUILD TOKEN --
-    public String buildToken(final UserEntity user, final long expiration){
+    public String buildToken(final UserEntity user, final long expiration) {
         return Jwts.builder()
                 .setId(user.getId().toString())
                 .claim("username", user.getUsername())
@@ -45,13 +46,13 @@ public class JwtService {
     }
 
     // ------------------- OBTAIN SIGNING KEY ---
-    public SecretKey getSignKey(){
+    public SecretKey getSignKey() {
         byte[] keyByte = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyByte);
     }
 
     // ------------------- EXTRACT USERNAME FROM TOKEN -------
-    public String extractUsername(String token){
+    public String extractUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
                 .build()
@@ -61,13 +62,18 @@ public class JwtService {
     }
 
     // ------------------- VALIDATE TOKEN ----------
-    public boolean isTokenValid(String token, UserEntity userEntity){
+    public boolean isTokenValid(String token, UserEntity userEntity) {
         final String username = extractUsername(token);
         return (username.equals(userEntity.getUsername())) && !isTokenExpired(token);
     }
 
+    public boolean isTokenValid(String token, org.springframework.security.core.userdetails.UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    }
+
     // ------------------- CHECK EXPIRATION -----
-    private boolean isTokenExpired(String token){
+    private boolean isTokenExpired(String token) {
         Date expiration = Jwts.parserBuilder()
                 .setSigningKey(getSignKey())
                 .build()

@@ -30,15 +30,19 @@ public class AuthService {
 
     // ------ REGISTER
     public TokenResponse register(RegisterRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new com.coopcredit.credit.application_service.domain.exception.BusinessException(
+                    "Username already exists");
+        }
         UserEntity user = UserEntity.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .build();
-        UserEntity savedUser = userRepository.save(user);
-        String token = jwtService.generateToken(savedUser);
-        return new TokenResponse(token);
-
+        var savedUser = userRepository.save(user);
+        var jwtToken = jwtService.generateToken(savedUser);
+        saveUserToken(savedUser, jwtToken);
+        return new TokenResponse(jwtToken);
     }
 
     // ------LOGIN
