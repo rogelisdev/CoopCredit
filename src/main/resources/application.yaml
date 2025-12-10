@@ -1,40 +1,122 @@
 
 server:
-  port: ${SERVE_PORT}
+  port: ${SERVER_PORT:8080}
 
 spring:
   application:
-    name: application-service
+    name: credit-application-service
+    
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: ${DB_DRIVER}
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/coopcredit}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
 
   jpa:
     hibernate:
-      ddl-auto: update       # create | create-drop | update | validate | none
+      ddl-auto: validate       # Use Flyway for migrations
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+
+  # Flyway configuration
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+    validate-on-migrate: true
 
   jackson:
     serialization:
       INDENT_OUTPUT: true
+    default-property-inclusion: non_null
 
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-
+# JWT Configuration
 jwt:
-  secret: ${JWT_SECRET}
-  expiration: ${JWT_EXPIRATION}   # 24 hora en milisegundos
-  issuer: ${JWT_ISSUER}
+  secret: ${JWT_SECRET:mySecretKeyForJWTTokenGenerationMustBeLongEnoughForHS256AlgorithmToWork}
+  expiration: ${JWT_EXPIRATION:86400000}   # 24 hours in milliseconds
+  issuer: ${JWT_ISSUER:credit-application-service}
   header: "Authorization"
   prefix: "Bearer "
 
+# Security
 security:
   enabled: true
+
+# Risk Service Configuration
+risk-service:
+  base-url: ${RISK_SERVICE_URL:http://localhost:8081}
+  timeout: ${RISK_SERVICE_TIMEOUT:5000}  # 5 seconds
+  retry:
+    max-attempts: ${RISK_SERVICE_RETRY_MAX_ATTEMPTS:3}
+    backoff-delay: ${RISK_SERVICE_RETRY_BACKOFF:1000}  # 1 second
+
+# Spring Boot Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.coopcredit.credit.application_service: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.security: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# SpringDoc OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+  show-actuator: true
+
+# Resilience4j Configuration
+resilience4j:
+  retry:
+    instances:
+      riskService:
+        max-attempts: ${risk-service.retry.max-attempts}
+        wait-duration: ${risk-service.retry.backoff-delay}ms
+        enable-exponential-backoff: true
+        exponential-backoff-multiplier: 2
+        retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - java.util.concurrent.TimeoutException
+          - java.io.IOException

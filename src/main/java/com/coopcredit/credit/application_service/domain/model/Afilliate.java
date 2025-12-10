@@ -1,10 +1,19 @@
 package com.coopcredit.credit.application_service.domain.model;
 
 import com.coopcredit.credit.application_service.domain.model.enums.AfilliateStatus;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Period;
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Afilliate {
     private Long id;
     private String firstName;
@@ -15,81 +24,40 @@ public class Afilliate {
     private AfilliateStatus status;
     private LocalDate registrationDate;
 
-    public Afilliate(Long id, String firstName, String lastname, String document, String email, BigDecimal salary, AfilliateStatus status, LocalDate registrationDate) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastname = lastname;
-        this.document = document;
-        this.email = email;
-        this.salary = salary;
-        this.status = status;
-        this.registrationDate = registrationDate;
+    /**
+     * Check if the affiliate is active
+     */
+    public boolean isActive() {
+        return AfilliateStatus.ACTIVE.equals(this.status);
     }
 
-    public Afilliate() {
+    /**
+     * Check if affiliate has minimum seniority in months
+     */
+    public boolean hasMinimumSeniority(int months) {
+        if (this.registrationDate == null) {
+            return false;
+        }
+        Period period = Period.between(this.registrationDate, LocalDate.now());
+        int totalMonths = period.getYears() * 12 + period.getMonths();
+        return totalMonths >= months;
     }
 
-    public Long getId() {
-        return id;
+    /**
+     * Validate if affiliate can afford the monthly installment (40% rule)
+     */
+    public boolean canAffordInstallment(BigDecimal monthlyInstallment) {
+        if (this.salary == null || monthlyInstallment == null) {
+            return false;
+        }
+        BigDecimal maxInstallment = this.salary.multiply(new BigDecimal("0.4"));
+        return monthlyInstallment.compareTo(maxInstallment) <= 0;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
-    public String getDocument() {
-        return document;
-    }
-
-    public void setDocument(String document) {
-        this.document = document;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public BigDecimal getSalary() {
-        return salary;
-    }
-
-    public void setSalary(BigDecimal salary) {
-        this.salary = salary;
-    }
-
-    public AfilliateStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(AfilliateStatus status) {
-        this.status = status;
-    }
-
-    public LocalDate getRegistrationDate() {
-        return registrationDate;
-    }
-
-    public void setRegistrationDate(LocalDate registrationDate) {
-        this.registrationDate = registrationDate;
+    /**
+     * Validate salary is positive
+     */
+    public boolean hasValidSalary() {
+        return this.salary != null && this.salary.compareTo(BigDecimal.ZERO) > 0;
     }
 }

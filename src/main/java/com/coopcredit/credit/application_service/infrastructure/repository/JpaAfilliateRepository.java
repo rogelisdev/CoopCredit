@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface JpaAfilliateRepository extends JpaRepository<AfilliateEntity, Long> {
     Optional<AfilliateEntity> findByDocument(String document);
+
+    boolean existsByDocument(String document);
 }

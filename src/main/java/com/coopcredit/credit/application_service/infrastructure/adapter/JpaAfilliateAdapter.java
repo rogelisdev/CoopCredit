@@ -18,7 +18,6 @@ public class JpaAfilliateAdapter implements AfilliateRepositoryPort {
     private final JpaAfilliateRepository jpaAfilliateRepository;
     private final AfilliateMapper afilliateMapper;
 
-
     @Override
     public Afilliate create(Afilliate newAfilliate) {
         AfilliateEntity saved = jpaAfilliateRepository.save(afilliateMapper.toEntity(newAfilliate));
@@ -39,6 +38,16 @@ public class JpaAfilliateAdapter implements AfilliateRepositoryPort {
     }
 
     @Override
+    public Optional<Afilliate> findByDocument(String document) {
+        return jpaAfilliateRepository.findByDocument(document).map(afilliateMapper::toModel);
+    }
+
+    @Override
+    public boolean existsByDocument(String document) {
+        return jpaAfilliateRepository.existsByDocument(document);
+    }
+
+    @Override
     public Optional<Afilliate> update(Afilliate updateAfilliate) {
         AfilliateEntity updated = jpaAfilliateRepository.save(afilliateMapper.toEntity(updateAfilliate));
         return Optional.ofNullable(afilliateMapper.toModel(updated));
@@ -46,7 +55,8 @@ public class JpaAfilliateAdapter implements AfilliateRepositoryPort {
 
     @Override
     public boolean delete(Long id) {
-        if(!jpaAfilliateRepository.existsById(id)) return false;
+        if (!jpaAfilliateRepository.existsById(id))
+            return false;
         jpaAfilliateRepository.deleteById(id);
         return true;
     }

@@ -3,17 +3,14 @@ package com.coopcredit.credit.application_service.infrastructure.mapper;
 import com.coopcredit.credit.application_service.domain.model.CreditApplication;
 import com.coopcredit.credit.application_service.infrastructure.entity.AfilliateEntity;
 import com.coopcredit.credit.application_service.infrastructure.entity.CreditApplicationEntity;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-@Builder
 @RequiredArgsConstructor
 public class CreditApplicationMapper {
 
     private final RiskEvaluationMapper riskEvaluationMapper;
-
 
     public CreditApplication toDomain(CreditApplicationEntity entity) {
         if (entity == null) {
@@ -27,7 +24,7 @@ public class CreditApplicationMapper {
                 .status(entity.getStatus())
                 .requestedDate(entity.getRequestedDate())
                 .evaluatedDate(entity.getEvaluatedDate())
-                .afilliateId(entity.getAfilliate() != null ? entity.getAfilliate().getId() : null)
+                .afilliateId(entity.getAffiliate() != null ? entity.getAffiliate().getId() : null)
                 .riskEvaluation(riskEvaluationMapper.toDomain(entity.getRiskEvaluation()))
                 .build();
     }
@@ -50,7 +47,7 @@ public class CreditApplicationMapper {
         if (domain.getAfilliateId() != null) {
             AfilliateEntity afilliateEntity = new AfilliateEntity();
             afilliateEntity.setId(domain.getAfilliateId());
-            entity.setAfilliate(afilliateEntity);
+            entity.setAffiliate(afilliateEntity);
         }
 
         return entity;

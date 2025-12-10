@@ -1,6 +1,5 @@
 package com.coopcredit.credit.application_service.infrastructure.config;
 
-
 import com.coopcredit.credit.application_service.infrastructure.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,13 +28,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Desactiva CSRF para API REST
+                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for REST API
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()          // Login/Register público
-                        .requestMatchers("/admin/**").hasRole("ADMIN")   // Rutas solo admin
-                        .requestMatchers("/user/**").hasAnyRole("USER","ADMIN") // Rutas de usuario
-                        .anyRequest().authenticated()                     // El resto requiere autenticación
-                )
+                        // Public endpoints
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/api-docs/**")
+                        .permitAll()
+                        .requestMatchers("/actuator/**").permitAll() // Or restrict to ADMIN if needed
+
+                        // Role-based access control
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/analyst/**").hasAnyRole("ANALYST", "ADMIN")
+                        .requestMatchers("/affiliates/**", "/credit-applications/**")
+                        .hasAnyRole("AFILIADO", "ANALYST", "ADMIN")
+
+                        // All other requests require authentication
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -45,8 +53,8 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-            org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration config
-    ) throws Exception {
+            org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration config)
+            throws Exception {
         return config.getAuthenticationManager();
     }
 }

@@ -1,0 +1,19 @@
+[
+  {
+    "httpRequest": {
+      "method": "POST",
+      "path": "/api/risk/evaluate"
+    },
+    "httpResponse": {
+      "statusCode": 200,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": {
+        "score": 75,
+        "level": "LOW",
+        "recommendations": "Approved based on good credit history and stable income"
+      }
+    }
+  }
+]
